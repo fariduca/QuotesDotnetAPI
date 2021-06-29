@@ -28,10 +28,38 @@ namespace QuotesDotnetAPI.Controllers
             return quote;
         } 
 
-        // POST action
+        [HttpPost]
+        public IActionResult Create(Quote quote)
+        {
+            QuotesService.Add(quote);
+            return CreatedAtAction(nameof(Create), new { id = quote.Id }, quote);
+        }
 
-        // PUT action
+        [HttpPut("{id}")]
+        public IActionResult Update(int Id, Quote quote)
+        {
+            if (Id != quote.Id)
+                return BadRequest();
+            
+            var existingQuote = QuotesService.Get(Id);
+            if(existingQuote is null)
+                return NotFound();
 
-        // DELETE action
+            QuotesService.Update(quote);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int Id)
+        {
+            var quote = QuotesService.Get(Id);
+            if (quote is null)
+                return NotFound();
+            
+            QuotesService.Delete(Id);
+
+            return NoContent();
+        }
     }
 }
